@@ -15,7 +15,9 @@ ALLOWED_HOSTS = [
     '127.0.0.1', 
     '.onrender.com',
     '.railway.app',
-    'matriculacion-backend.onrender.com'  # Agregar tu URL específica
+    'matriculacion-escolar-ulqn.onrender.com',
+    'matriculacion-frontend.onrender.com',
+    '*'
 ]
 
 INSTALLED_APPS = [
@@ -77,6 +79,43 @@ REST_FRAMEWORK = {
     ),
 }
 
+# CONFIGURACIÓN CORS COMPLETA
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
+    "https://matriculacion-frontend.onrender.com",
+    "https://matriculacion-escolar-ulqn.onrender.com",
+]
+
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r"^https://\w+\.onrender\.com$",
+]
+
+CORS_ALLOW_METHODS = [
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+]
+
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+]
+
 WSGI_APPLICATION = 'matriculacion.wsgi.application'
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -94,31 +133,13 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
-    "https://matriculacion-frontend.onrender.com",
-]
-
-CORS_ALLOW_ALL_ORIGINS = True
-
 LANGUAGE_CODE = 'es-es'
 TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
-# Configuración de Static Files para producción
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),
-]
-
-# WhiteNoise configuration
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-
-# Media files (si necesitas subir archivos)
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
