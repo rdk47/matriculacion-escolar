@@ -352,24 +352,31 @@ function App() {
   };
 
   // Función de login
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      const response = await axios.post("/api/inscripcion/auth/login/", loginData);
-      const { access } = response.data;
-      
-      localStorage.setItem('token', access);
-      axios.defaults.headers.common['Authorization'] = `Bearer ${access}`;
+const handleLogin = async (e: React.FormEvent) => {
+  e.preventDefault();
+  try {
+    const response = await axios.post("/inscripcion/auth/login/", loginData);
+    console.log('Login response:', response.data);
+    
+    // El backend responde con JWT
+    if (response.data.access) {
+      const token = response.data.access;
+      localStorage.setItem('token', token);
+      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       setIsAuthenticated(true);
       setMensaje({ tipo: "success", texto: "Login exitoso" });
       cargarDatos();
-    } catch (error: any) {
-      setMensaje({ 
-        tipo: "error", 
-        texto: error.response?.data?.error || "Error en el login" 
-      });
+    } else {
+      setMensaje({ tipo: "error", texto: "Respuesta inesperada del servidor" });
     }
-  };
+  } catch (error: any) {
+    console.error('Login error:', error);
+    setMensaje({ 
+      tipo: "error", 
+      texto: error.response?.data?.error || "Error en el login" 
+    });
+  }
+};
 
   // Función de logout
   const handleLogout = () => {
