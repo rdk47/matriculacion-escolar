@@ -1,6 +1,12 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
+// Configuración de la API
+const API_BASE = 'https://matriculacion-escolar-ulqn.onrender.com/api';
+
+// Configurar axios base URL
+axios.defaults.baseURL = API_BASE;
+
 // Interfaces TypeScript
 interface Curso {
   id: number;
@@ -331,9 +337,9 @@ function App() {
     try {
       setLoading(true);
       const [cursosRes, alumnosRes, inscripcionesRes] = await Promise.all([
-        axios.get("/api/inscripcion/cursos/"),
-        axios.get("/api/inscripcion/alumnos/"),
-        axios.get("/api/inscripcion/inscripciones/")
+        axios.get("/inscripcion/cursos/"),
+        axios.get("/inscripcion/alumnos/"),
+        axios.get("/inscripcion/inscripciones/")
       ]);
 
       setCursos(cursosRes.data);
@@ -351,32 +357,39 @@ function App() {
     }
   };
 
-  // Función de login
-const handleLogin = async (e: React.FormEvent) => {
-  e.preventDefault();
-  try {
-    const response = await axios.post("/inscripcion/auth/login/", loginData);
-    console.log('Login response:', response.data);
-    
-    // El backend responde con JWT
-    if (response.data.access) {
-      const token = response.data.access;
-      localStorage.setItem('token', token);
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      setIsAuthenticated(true);
-      setMensaje({ tipo: "success", texto: "Login exitoso" });
-      cargarDatos();
-    } else {
-      setMensaje({ tipo: "error", texto: "Respuesta inesperada del servidor" });
+  // Función de login CORREGIDA
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      console.log('Login attempt to:', `${API_BASE}/inscripcion/auth/login/`);
+      
+      const response = await axios.post("/inscripcion/auth/login/", loginData);
+      console.log('Login response:', response.data);
+      
+      // El backend responde con JWT
+      if (response.data.access) {
+        const token = response.data.access;
+        localStorage.setItem('token', token);
+        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+        setIsAuthenticated(true);
+        setMensaje({ tipo: "success", texto: "Login exitoso" });
+        cargarDatos();
+      } else {
+        setMensaje({ tipo: "error", texto: "Respuesta inesperada del servidor" });
+      }
+    } catch (error: any) {
+      console.error('Login error:', error);
+      console.error('Error details:', error.response?.data);
+      
+      if (error.response?.status === 404) {
+        setMensaje({ tipo: "error", texto: "Endpoint no encontrado. Verifica la URL del backend." });
+      } else if (error.response?.status === 401) {
+        setMensaje({ tipo: "error", texto: "Credenciales inválidas. Usa: admin / password" });
+      } else {
+        setMensaje({ tipo: "error", texto: `Error: ${error.response?.data?.error || error.message}` });
+      }
     }
-  } catch (error: any) {
-    console.error('Login error:', error);
-    setMensaje({ 
-      tipo: "error", 
-      texto: error.response?.data?.error || "Error en el login" 
-    });
-  }
-};
+  };
 
   // Función de logout
   const handleLogout = () => {
@@ -664,6 +677,9 @@ const handleLogin = async (e: React.FormEvent) => {
             <div style={{marginTop: '20px', textAlign: 'center', color: '#7f8c8d'}}>
               <p>Usuario: <strong>admin</strong></p>
               <p>Contraseña: <strong>password</strong></p>
+              <p style={{marginTop: '10px', fontSize: '0.8rem'}}>
+                Backend: {API_BASE}
+              </p>
             </div>
           </div>
         </div>
