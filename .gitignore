@@ -1,4 +1,4 @@
-# Archivos de Python
+# Python
 __pycache__/
 *.pyc
 *.pyo
@@ -15,11 +15,7 @@ env/
 # Base de datos SQLite
 *.sqlite3
 *.db
-
-# Archivos de Django
-*.log
-local_settings.py
-db.sqlite3
+database/
 
 # Node.js
 node_modules/
@@ -58,26 +54,7 @@ logs/
 *.tmp
 *.temp
 
-# Postman
-*Postman Agent
-
-# Archivos grandes y temporales
+# Archivos grandes y de Postman
 Postman Agent/
 *.tar.gz
 *.zip
-*.log
-*.sqlite3
-*.db
-
-# Archivos grandes y temporales
-Postman Agent/
-*.tar.gz
-*.zip
-*.log
-*.sqlite3
-*.db
-database/
-__pycache__/
-node_modules/
-.env
-.DS_Store
